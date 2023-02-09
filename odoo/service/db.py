@@ -95,6 +95,13 @@ def _initialize_db(id, db_name, demo, lang, user_password, login='admin', countr
         _logger.exception('CREATE DATABASE failed:')
 
 def _create_empty_database(name):
+    # to avoid making to much time to developer life that
+    # want to setup a new db we should
+    # raise fast only if some env are set likes::
+    #   if os.environ.get("POSTGRES_DB_ACCESS_FORBIDDEN", False):
+    raise DatabaseExists(
+        "We are not allowed to access to posgres DB, assume db already exists %r" % (name,)
+    )
     db = odoo.sql_db.db_connect('postgres')
     with closing(db.cursor()) as cr:
         chosen_template = odoo.tools.config['db_template']
