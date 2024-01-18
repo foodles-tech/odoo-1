@@ -754,6 +754,13 @@ def connection_info_for(db_or_uri):
 _Pool = None
 
 def db_connect(to, allow_uri=False):
+    # To avoid developer loosing to much time we should probably
+    # add env variable likes POSTGRES_DB_ACCESS_FORBIDDEN
+    # in case db_name is not present
+    # it would avoid complains that db does not exist while
+    # trying to create it on dev env
+    if to == 'postgres':
+        to = tools.config['db_name'].split(',')[0]
     global _Pool
     if _Pool is None:
         _Pool = ConnectionPool(int(tools.config['db_maxconn']))
